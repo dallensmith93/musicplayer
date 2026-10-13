@@ -1,0 +1,31 @@
+name: Dependency security and verification
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 15 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install from lockfile
+        run: npm ci --include=dev
+      - name: Audit all dependencies at every severity
+        run: npm audit --include=dev --audit-level=low
+      - name: Tests
+        if: ${{ !cancelled() }}
+        run: npm test
+      - name: Production build
+        if: ${{ !cancelled() }}
+        run: npm run build

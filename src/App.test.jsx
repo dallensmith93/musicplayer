@@ -160,6 +160,23 @@ test("filters out wrong-genre tracks and drives the mixed autopilot queue", asyn
   expect(within(queue).getByText("Gaming")).toBeInTheDocument();
   expect(within(queue).getByText("Country")).toBeInTheDocument();
 
+  const audio = container.querySelector("audio");
+  Object.defineProperty(audio, "duration", { configurable: true, value: 30 });
+  fireEvent.loadedMetadata(audio);
+  fireEvent.input(screen.getByRole("slider"), { target: { value: "50" } });
+  expect(audio.currentTime).toBe(15);
+  expect(screen.getByText("00:15")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Play", exact: true }));
+  fireEvent.play(audio);
+  await waitFor(() => {
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
+  });
+  expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+  fireEvent.pause(audio);
+  expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled();
+
   fireEvent.click(screen.getByRole("button", { name: "Next" }));
 
   await waitFor(() => {
@@ -173,6 +190,15 @@ test("filters out wrong-genre tracks and drives the mixed autopilot queue", asyn
   });
 
   expect(screen.queryByText("Noise Artist")).not.toBeInTheDocument();
+
+  fireEvent.click(within(queue).getByRole("button", { name: /Holy Diver/ }));
+  expect(screen.getByRole("heading", { name: "Holy Diver" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Autopilot On" }));
+  fireEvent.click(screen.getByRole("tab", { name: "Country", exact: true }));
+  await waitFor(() => {
+    expect(screen.getByRole("heading", { name: "Country Song" })).toBeInTheDocument();
+  });
+  expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining("term=country"));
 
   document.activeElement?.blur?.();
   unmount();

@@ -1,4 +1,43 @@
-# Getting Started with Create React App
+# Music Player
+
+This project now uses React, Vite, and Vitest with npm. Use Node.js
+20.19+ or 22.12+ (Node 22 is used in CI).
+
+```sh
+npm ci --include=dev
+npm audit --include=dev --audit-level=low
+npm test
+npm run build
+```
+
+`npm start` starts Vite at http://localhost:5173. Production output is in
+`dist/`, which is tracked in this repository. There are no configured lint or
+type-check scripts. CI checks the complete dependency tree, tests, and build on
+pushes, pull requests, and weekly; any audit finding fails the job. Dependabot
+checks the root npm project and GitHub Actions weekly.
+
+The October 2026 dependency security update resolves Browserslist to 4.29.3,
+Nano ID to 3.3.20, and PostCSS to 8.5.30. The actual GitHub advisory IDs are
+[GHSA-73wf-gq98-2v4g](https://github.com/advisories/GHSA-73wf-gq98-2v4g),
+[GHSA-xwg4-73v4-xw9w](https://github.com/advisories/GHSA-xwg4-73v4-xw9w),
+[GHSA-r28c-9q8g-f849](https://github.com/advisories/GHSA-r28c-9q8g-f849), and
+[GHSA-6g55-p6wh-862q](https://github.com/advisories/GHSA-6g55-p6wh-862q).
+PostCSS also exceeds the 8.5.23 minimum for the later incomplete-fix advisory.
+
+These packages are indirect build dependencies: the React Vite plugin brings in
+Babel and its compilation targets helper, which uses Browserslist. Vite uses
+PostCSS, which uses Nano ID and source-map-js. Vitest also uses Vite.
+Vite 7.3.7 and Vitest 4.1.11 address additional development-tool alerts; compatible
+Babel and jsdom's ws dependencies were updated as well. No new overrides were
+needed; the existing Babel runtime override remains.
+
+The player uses iTunes genre searches and an in-memory playlist/autopilot queue.
+It has no volume control, persistent saved data, free-text search, or AI service.
+Regression tests mock API responses and media methods/events to check filtering,
+queue advancement/selection, seeking, playback controls, and genre switching.
+Real remote audio playback and API availability require a manual browser check.
+
+## Historical Create React App documentation
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
