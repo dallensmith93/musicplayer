@@ -13,8 +13,9 @@ npm run build
 `npm start` starts Vite at http://localhost:5173. Production output is in
 `dist/`, which is tracked in this repository. There are no configured lint or
 type-check scripts. CI checks the complete dependency tree, tests, and build on
-pushes, pull requests, and weekly; any audit finding fails the job. Dependabot
-checks the root npm project and GitHub Actions weekly.
+pushes and pull requests; any audit finding fails the job. Scheduled dependency
+update PRs and automated security-update PRs are disabled. Security alerts remain
+enabled.
 
 The October 2026 dependency security update resolves Browserslist to 4.29.3,
 Nano ID to 3.3.20, and PostCSS to 8.5.30. The actual GitHub advisory IDs are
